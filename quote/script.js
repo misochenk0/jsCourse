@@ -4,16 +4,15 @@ const authorText = document.getElementById('author');
 const twitterBtn = document.getElementById('twitter');
 const newQuoteBtn = document.getElementById('new-quote');
 const loader = document.getElementById('loader');
+let counter = 0;
 
-//Show loading
-function loading() {
+function showLoadingSpinner() {
     loader.hidden = false;
     loader.style.display = 'block';
     quoteContainer.hidden = true;
 }
 
-// Hide loading
-function complete() {
+function removeLoadingSpinner() {
     if(!loader.hidden) {
         quoteContainer.hidden = false;
         loader.hidden = true
@@ -23,9 +22,8 @@ function complete() {
 }
 
 // Get quote from API
-// console.log(quoteContainer, quoteText, authorText, twitterBtn, newQuoteBtn );
 async function getQuote() {
-    loading();
+    showLoadingSpinner();
     const proxyUrl = 'https://dry-hollows-36587.herokuapp.com/'
     const apiUrl = 'http://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json';
     try {
@@ -42,13 +40,18 @@ async function getQuote() {
             quoteText.classList.add('long-quote')
         } else {
             quoteText.classList.remove('long-quote')
-            
         }
         quoteText.innerText = data.quoteText;
-        complete()
+        removeLoadingSpinner()
     } catch (error) {
-        getQuote();
-        console.log('whoops', error);
+        counter++
+        console.log(counter)
+        if(counter > 10) {
+            return counter = 0
+        } else {
+            getQuote();
+        }
+
     }
 }
 
